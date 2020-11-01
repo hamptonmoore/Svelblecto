@@ -1,77 +1,106 @@
 <main>
-    <h1>Login!</h1>
+    <h1>Oblecto Login</h1>
     <h2>{message}</h2>
-    {#if state == "endpoint"}
-        <input bind:value={endpoint} placeholder="Oblecto Server">
+    {#if state == states.ENDPOINT}
+        <input bind:value={states.ENDPOINT.endpoint} placeholder="Oblecto Server">
         <br>
         <button on:click={checkEndpoint}>Login</button>
     {/if}
 
-    {#if state == "userselect"}
-        {#each users as user}
-            <div>
-                {user.username}
-            </div>
-        {/each}
+    {#if state == states.USERS}
+        <div class="row justify-content-center">
+            {#each states.USERS.users as user}
+                <div class="col-sm-15 col-md-4 col-lg-3 userSelect" on:click={selectUser(user)}>
+                    <div class="card">
+                        <div class="img-wrapper">
+                            <img class="card-img-top" src="https://picsum.photos/seed/{user.username}/256/256">
+                            <div class="card-img-overlay d-flex">
+                                <h2 class="align-self-center mx-auto">{user.username}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {/each}
+        </div>
+    {/if}
+
+    {#if state == states.LOGIN}
+        <input bind:value={states.LOGIN.username} placeholder="username">
+        <br>
+        <input bind:value={states.LOGIN.password} placeholder="password">
+        <br>
+        <button on:click={login}>Login</button>
     {/if}
 </main>
 
 <script>
     import {store} from '../store';
     import {push} from "svelte-spa-router";
-    let state = 'endpoint';
-    let users = [];
-    let message = '';
-    let username = '';
-    let password = '';
-    let endpoint = '';
 
-    async function checkEndpoint(){
-        let result = await store.checkEndpoint(endpoint);
-        if (result.status == "success"){
-            state = "userselect";
-            users = result.data;
-            console.log(users);
+    let states = {
+        "ENDPOINT": {
+            endpoint: ""
+        },
+        "USERS": {
+            users: []
+        },
+        "LOGIN": {
+            username: "",
+            password: ""
+        }
+    }
+    let state = states.ENDPOINT;
+    let message = '';
+
+    async function checkEndpoint() {
+        let result = await store.checkEndpoint(states.ENDPOINT.endpoint);
+        if (result.status == "success") {
+            states.USERS.users = result.data;
+            state = states.USERS;
         } else {
             message = result.reason;
         }
     }
 
-    async function login(){
-
-        console.log(username, password);
-        switch(await store.loginUser(username, password, endpoint)){
-            case "success":
-                push("/");
-                break;
-            case "endpointErr":
-                message = "Endpoint not found";
-                break;
-            case "loginErr":
-                message = "username or password not correct, please try again";
-                break;
+    async function login() {
+        let result = await store.loginUser(states.LOGIN.username, states.LOGIN.password, states.ENDPOINT.endpoint);
+        if (result.status == "success"){
+            push("/");
+        } else {
+            switch (result.reason){
+                case "endpointErr":
+                    message = "Endpoint appears to be down, please try again";
+                    state = states.ENDPOINT;
+                    break;
+                case "loginErr":
+                    message = "Username or Password not correct, please try again";
+                    break;
+            }
         }
+    }
+
+    function selectUser(user) {
+        console.log(user);
+        state = states.LOGIN;
+        states.LOGIN.username = user.username;
+    }
+
+    function hover(cb, cb2) {
+        console.log(cb, cb2);
     }
 </script>
 
 <style>
-    main {
-        text-align: center;
-        padding: 1em;
-        max-width: 240px;
-        margin: 0 auto;
+    .userSelect:hover {
+        cursor: pointer;
     }
 
-    h1 {
-        color: #ff3e00;
-        text-transform: uppercase;
-        font-size: 4em;
-        font-weight: 100;
+    .card {
+        margin: 1em;
     }
 
-    @media (min-width: 640px) {
-        main {
-            max-width: none;
-        }
+    .card-img-overlay {
+        color: white;
+        background-color: rgba(0, 0, 0, 0.3);
     }
 </style>

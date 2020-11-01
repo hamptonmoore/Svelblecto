@@ -39,7 +39,9 @@
 </script>
 
 <body>
+<div class="container">
     <Router {routes}/>
+</div>
 </body>
 
 

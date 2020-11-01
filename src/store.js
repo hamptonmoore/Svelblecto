@@ -32,15 +32,15 @@ let store = {
                 password,
             })
             this.applyJWT(data.accessToken);
-            return "success";
+            return {status: "success"};
         } catch(error) {
             if (error.response) {
                 // Request made and server responded
                 console.log(error.response.data);
-                return "loginErr";
+                return {status: "failure", reason: "loginErr"};
             } else {
                 console.log("failed to load");
-                return "endpointErr";
+                return {status: "failure", reason: "endpointErr"};
             }
         }
     },
