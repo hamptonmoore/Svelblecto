@@ -20,6 +20,7 @@
     "jwt-decode": "^3.0.0",
     "oblectoclient": "0.0.4",
     "sirv-cli": "^1.0.0",
+    "svelte-awesome": "^2.3.0",
     "svelte-spa-router": "^3.0.5"
   }
 }

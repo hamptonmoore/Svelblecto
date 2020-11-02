@@ -1,5 +1,5 @@
 import jwt_decode from "jwt-decode";
-import {location} from "svelte-spa-router";
+import {location, push} from "svelte-spa-router";
 import {writable, get} from "svelte/store";
 import axios from "axios";
 import Oblecto from 'oblectoclient';
@@ -34,6 +34,12 @@ let store = {
 
     buildLocalUserData: async function () {
         store.user.set(jwt_decode(this.oblecto.accessToken));
+    },
+
+    signOut: async function(){
+      localStorage.removeItem("JWT");
+      store.loggedIn.set(false);
+      push("/login");
     },
 
     loginUser: async function (username, password) {
