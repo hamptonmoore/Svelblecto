@@ -11,7 +11,11 @@
 
     store.loggedIn.subscribe((value) => {
         loggedIn = value;
-    })
+    });
+
+    let showNav = true;
+
+    store.showNav.subscribe((v) => showNav = v);
 
     const routes = {
         // Exact path
@@ -44,10 +48,17 @@
 
 </script>
 
-<body>
-<div class="container">
-    <Router {routes}/>
+<div>
+    <nav class="navbar navbar-dark bg-primary" class:d-none={!showNav}>
+        <a class="navbar-brand" href="#">Oblecto</a>
+    </nav>
+    <div class="container">
+        <Router {routes}/>
+    </div>
 </div>
-</body>
 
-
+<style>
+    nav {
+        margin-bottom: 2em;
+    }
+</style>

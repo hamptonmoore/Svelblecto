@@ -10,11 +10,11 @@ let store = {
     oblecto: null,
     user: writable({
         "id": 0,
-        "sirname": null,
         "name": null,
         "email": null,
         "iat": null
     }),
+    showNav: writable(true),
     endpoint: localStorage.getItem("endpoint"),
     loggedIn: writable(false),
 
@@ -31,7 +31,7 @@ let store = {
         }
     },
 
-    buildLocalUserData: function () {
+    buildLocalUserData: async function () {
         store.user.set(jwt_decode(this.oblecto.accessToken));
     },
 
@@ -68,13 +68,11 @@ if (localStorage.getItem("endpoint") && localStorage.getItem("JWT")) {
     oblectoTest.axios.defaults.headers.common = {'Authorization': `bearer ${oblectoTest.accessToken}`};
 
     oblectoTest.remotes.getClients().then(() => {
-        console.log("Auth worked");
         store.loggedIn.set(true);
         store.oblecto = oblectoTest;
         store.buildLocalUserData();
     }).catch((err) => {
         localStorage.removeItem("JWT");
-        console.log("Auth failed");
     });
 }
 
