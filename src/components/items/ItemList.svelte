@@ -20,7 +20,6 @@
     .scrollable {
         overflow: hidden;
         overflow-x: visible;
-        white-space: nowrap;
         padding: 5px 0;
     }
 </style>
