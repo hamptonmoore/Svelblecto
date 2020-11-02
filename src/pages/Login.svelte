@@ -121,9 +121,6 @@
 </script>
 
 <style>
-    .card {
-        margin: 1em;
-    }
 
     .card-img-overlay {
         color: white;
