@@ -11,16 +11,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="73b6fa75-2a8e-47d8-873b-e5457ff841b8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/pages/Viewer.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/items/ItemList.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/items/ItemList.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/items/Movie.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/items/Movie.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/items/TVShow.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/items/TVShow.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Home.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Home.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Login.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Login.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Viewer.svelte" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -67,7 +77,7 @@
       <workItem from="1604095056119" duration="17000" />
       <workItem from="1604095082913" duration="1762000" />
       <workItem from="1604099427816" duration="12650000" />
-      <workItem from="1604114216209" duration="26419000" />
+      <workItem from="1604114216209" duration="30789000" />
     </task>
     <servers />
   </component>
@@ -86,30 +96,30 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1242" height="282" key="GridCell.Tab.0.bottom" timestamp="1604105028962">
+    <state width="1242" height="281" key="GridCell.Tab.0.bottom" timestamp="1604328466979">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
-    <state width="1242" height="282" key="GridCell.Tab.0.bottom/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604105028962" />
-    <state width="1242" height="282" key="GridCell.Tab.0.center" timestamp="1604105028961">
+    <state width="1242" height="281" key="GridCell.Tab.0.bottom/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604328466979" />
+    <state width="1242" height="281" key="GridCell.Tab.0.center" timestamp="1604328466979">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
-    <state width="1242" height="282" key="GridCell.Tab.0.center/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604105028961" />
-    <state width="1242" height="282" key="GridCell.Tab.0.left" timestamp="1604105028961">
+    <state width="1242" height="281" key="GridCell.Tab.0.center/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604328466979" />
+    <state width="1242" height="281" key="GridCell.Tab.0.left" timestamp="1604328466978">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
-    <state width="1242" height="282" key="GridCell.Tab.0.left/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604105028961" />
-    <state width="1242" height="282" key="GridCell.Tab.0.right" timestamp="1604105028961">
+    <state width="1242" height="281" key="GridCell.Tab.0.left/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604328466978" />
+    <state width="1242" height="281" key="GridCell.Tab.0.right" timestamp="1604328466979">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
-    <state width="1242" height="282" key="GridCell.Tab.0.right/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604105028961" />
+    <state width="1242" height="281" key="GridCell.Tab.0.right/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604328466979" />
     <state x="282" y="94" key="SettingsEditor" timestamp="1604114761852">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
     <state x="282" y="94" key="SettingsEditor/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604114761852" />
-    <state x="177" y="-152" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1604326288739">
+    <state x="173" y="-224" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1604337280142">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
-    <state x="177" y="-152" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604326288739" />
+    <state x="173" y="-224" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604337280142" />
     <state x="305" y="251" width="672" height="678" key="search.everywhere.popup" timestamp="1604322701391">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>

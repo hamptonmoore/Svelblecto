@@ -60,11 +60,17 @@
 
 <script>
     import {store} from '../store';
-    import {push} from "svelte-spa-router";
+    import {get} from 'svelte/store';
+    import {push, location} from "svelte-spa-router";
 
     store.loggedIn.subscribe((v)=>{
         if (v){
-            push("/");
+            let redirectedFrom = get(store.redirectedFrom);
+            if (redirectedFrom != ""){
+                push(redirectedFrom);
+            } else {
+                push("/");
+            }
         }
     })
 

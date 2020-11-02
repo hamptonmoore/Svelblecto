@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
-import {push} from "svelte-spa-router";
-import {writable} from "svelte/store";
+import {location} from "svelte-spa-router";
+import {writable, get} from "svelte/store";
 import axios from "axios";
 import Oblecto from 'oblectoclient';
 
@@ -14,6 +14,7 @@ let store = {
         "email": null,
         "iat": null
     }),
+    redirectedFrom: writable(""),
     showNav: writable(true),
     endpoint: localStorage.getItem("endpoint"),
     loggedIn: writable(false),
@@ -75,7 +76,6 @@ if (localStorage.getItem("endpoint") && localStorage.getItem("JWT")) {
         localStorage.removeItem("JWT");
     });
 }
-
 
 export {store};
 

@@ -1,11 +1,12 @@
 <script>
     import Router from 'svelte-spa-router'
-    import {push, pop, replace} from 'svelte-spa-router'
+    import {push, pop, replace, location} from 'svelte-spa-router'
+    import {get} from 'svelte/store';
     import {wrap} from 'svelte-spa-router/wrap'
     import {store} from "./store";
     import Login from "./pages/Login.svelte";
     import Home from "./pages/Home.svelte";
-
+    import Viewer from "./pages/Viewer.svelte";
 
     let loggedIn = false;
 
@@ -17,6 +18,16 @@
 
     store.showNav.subscribe((v) => showNav = v);
 
+    async function checkLoggedIn(detail) {
+        if (!loggedIn) {
+            store.redirectedFrom.set(get(location));
+            push('/login');
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     const routes = {
         // Exact path
         '/': wrap({
@@ -24,15 +35,16 @@
             asyncComponent: () => Home,
             // Adding one pre-condition that's an async function
             conditions: [
-                async (detail) => {
-                    // Return true to continue loading the component, or false otherwise
-                    if (!loggedIn) {
-                        push('/login');
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
+                checkLoggedIn
+            ]
+        }),
+
+        '/viewer/:type/:id/:file': wrap({
+            // Use a dynamically-loaded component for this
+            asyncComponent: () => Viewer,
+            // Adding one pre-condition that's an async function
+            conditions: [
+                checkLoggedIn
             ]
         }),
 
@@ -51,6 +63,7 @@
 <div>
     <nav class="navbar navbar-dark bg-primary" class:d-none={!showNav}>
         <a class="navbar-brand" href="#">Oblecto</a>
+
     </nav>
     <div class="container">
         <Router {routes}/>
