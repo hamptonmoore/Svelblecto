@@ -3,20 +3,26 @@
     import {push, pop, replace} from 'svelte-spa-router'
     import {wrap} from 'svelte-spa-router/wrap'
     import {store} from "./store";
-
-    import Home from "./pages/Home.svelte";
     import Login from "./pages/Login.svelte";
+    import Home from "./pages/Home.svelte";
+
+
+    let loggedIn = false;
+
+    store.loggedIn.subscribe((value) => {
+        loggedIn = value;
+    })
 
     const routes = {
         // Exact path
         '/': wrap({
             // Use a dynamically-loaded component for this
-            asyncComponent: () => import('./pages/Home.svelte'),
+            asyncComponent: () => Home,
             // Adding one pre-condition that's an async function
             conditions: [
                 async (detail) => {
                     // Return true to continue loading the component, or false otherwise
-                    if (!store.loggedIn) {
+                    if (!loggedIn) {
                         push('/login');
                         return false;
                     } else {

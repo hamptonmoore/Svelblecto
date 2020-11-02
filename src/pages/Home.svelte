@@ -1,13 +1,20 @@
 <script>
     import {link} from 'svelte-spa-router'
     import {store} from '../store';
+
+    console.log("Loaded");
+    let test = async () => {
+        console.log(await store.oblecto.movieLibrary.getList('popularity', 'asc'))
+    };
+    test();
+
+    let user;
+    store.user.subscribe((v) => user = v);
 </script>
 
-<main>
-<h1>Hello!</h1>
-    {JSON.stringify(store)}
-    <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
+<div>
+    Hello, {user.username}
+</div>
 
 <style>
 

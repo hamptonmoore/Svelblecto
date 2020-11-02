@@ -1,39 +1,49 @@
 import jwt_decode from "jwt-decode";
 import {push} from "svelte-spa-router";
+import {writable} from "svelte/store";
 import axios from "axios";
+import Oblecto from 'oblectoclient';
+
+let OblectoSession = Oblecto.default;
 
 let store = {
-    user: {
+    oblecto: null,
+    user: writable({
         "id": 0,
-        "sername": null,
+        "sirname": null,
         "name": null,
         "email": null,
         "iat": null
-    },
-    JWT: null,
-    endpoint: null,
-    loggedIn: false,
+    }),
+    endpoint: localStorage.getItem("endpoint"),
+    loggedIn: writable(false),
 
-    checkEndpoint: async function(endpoint){
+    checkEndpoint: async function (endpoint) {
         endpoint = endpoint || "http://localhost:8080";
         try {
-            let {data} = await axios.get(`${endpoint}/users`);
-            return {status: "success", data}
-        } catch(error) {
-                return {status: "failure", reason: "Endpoint not found"};
+            this.oblecto = new OblectoSession(endpoint);
+            let users = await this.oblecto.userManager.getUsers();
+            this.setEndpoint(endpoint);
+            return {status: "success", data: users}
+        } catch (error) {
+            console.log(error);
+            return {status: "failure", reason: "Endpoint not found"};
         }
     },
 
-    loginUser: async function (username, password, endpoint) {
-        endpoint = endpoint || "http://localhost:8080";
+    buildLocalUserData: function () {
+        store.user.set(jwt_decode(this.oblecto.accessToken));
+    },
+
+    loginUser: async function (username, password) {
         try {
-            let {data} = await axios.post(`${endpoint}/auth/login`, {
-                username,
-                password,
-            })
-            this.applyJWT(data.accessToken);
+            await this.oblecto.authenticate(username, password);
+            this.loggedIn.set(true);
+            localStorage.setItem("JWT", this.oblecto.accessToken);
+            this.buildLocalUserData();
             return {status: "success"};
-        } catch(error) {
+        } catch (error) {
+            console.log(error)
             if (error.response) {
                 // Request made and server responded
                 console.log(error.response.data);
@@ -47,13 +57,27 @@ let store = {
 
     setEndpoint: function (endpoint) {
         this.endpoint = endpoint;
-    },
-    applyJWT: function (JWT) {
-        this.JWT = JWT;
-        this.loggedIn = true;
-        this.user = jwt_decode(JWT);
+        localStorage.setItem("endpoint", endpoint);
     }
 }
+
+if (localStorage.getItem("endpoint") && localStorage.getItem("JWT")) {
+    let oblectoTest = new OblectoSession(localStorage.getItem("endpoint"));
+
+    oblectoTest.accessToken = localStorage.getItem("JWT");
+    oblectoTest.axios.defaults.headers.common = {'Authorization': `bearer ${oblectoTest.accessToken}`};
+
+    oblectoTest.remotes.getClients().then(() => {
+        console.log("Auth worked");
+        store.loggedIn.set(true);
+        store.oblecto = oblectoTest;
+        store.buildLocalUserData();
+    }).catch((err) => {
+        localStorage.removeItem("JWT");
+        console.log("Auth failed");
+    });
+}
+
 
 export {store};
 

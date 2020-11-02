@@ -1,5 +1,5 @@
-<main>
-    <h1>Oblecto Login</h1>
+<div class="mx-auto">
+    <h1>Oblecto: Login</h1>
     <h2>{message}</h2>
     {#if state == states.ENDPOINT}
         <input bind:value={states.ENDPOINT.endpoint} placeholder="Oblecto Server">
@@ -31,15 +31,21 @@
         <br>
         <button on:click={login}>Login</button>
     {/if}
-</main>
+</div>
 
 <script>
     import {store} from '../store';
     import {push} from "svelte-spa-router";
 
+    store.loggedIn.subscribe((v)=>{
+        if (v){
+            push("/");
+        }
+    })
+
     let states = {
         "ENDPOINT": {
-            endpoint: ""
+            endpoint: store.endpoint
         },
         "USERS": {
             users: []
@@ -55,6 +61,7 @@
     async function checkEndpoint() {
         let result = await store.checkEndpoint(states.ENDPOINT.endpoint);
         if (result.status == "success") {
+            console.log(result.data);
             states.USERS.users = result.data;
             state = states.USERS;
         } else {
@@ -64,9 +71,7 @@
 
     async function login() {
         let result = await store.loginUser(states.LOGIN.username, states.LOGIN.password, states.ENDPOINT.endpoint);
-        if (result.status == "success"){
-            push("/");
-        } else {
+        if (result.status != "success"){
             switch (result.reason){
                 case "endpointErr":
                     message = "Endpoint appears to be down, please try again";
