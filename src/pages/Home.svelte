@@ -1,5 +1,8 @@
 <script>
     import {link} from 'svelte-spa-router'
+    import TVShow from '../components/items/TVShow.svelte';
+    import Movie from '../components/items/Movie.svelte';
+    import ItemList from '../components/items/ItemList.svelte';
     import {store} from '../store';
 
     console.log("Loaded");
@@ -9,44 +12,21 @@
 </script>
 
 <div>
-    <div class="row mx-auto justify-content-center">
-        {#await store.oblecto.movieLibrary.getList('createdAt', 'desc')}
+    <ItemList child={Movie} title="Recently Added: Movies" promise={store.oblecto.movieLibrary.getList('createdAt', 'desc')}/>
 
-        {:then movieLibrary}
-
-            {#each movieLibrary as movie}
-                <div class="col-sm-12 col-md-3 col-lg-2 clickable">
-                    <div class="card text-white">
-                        <img class="card-img-top" src={`${store.endpoint}/movie/${movie.id}/poster`}>
-                        <div class="card-body">
-                            <h6 class="card-title">{movie.movieName}</h6>
-                        </div>
-                    </div>
-                </div>
-            {/each}
-
-        {/await}
-    </div>
-    <div class="row mx-auto justify-content-center">
-        {#await store.oblecto.movieLibrary.getList('createdAt', 'desc')}
-
-        {:then movieLibrary}
-
-            {#each movieLibrary as movie}
-                <div class="col-sm-12 col-md-3 col-lg-2 clickable">
-                    <div class="card text-white">
-                        <img class="card-img-top" src={`${store.endpoint}/movie/${movie.id}/poster`}>
-                        <div class="card-body">
-                            <h6 class="card-title">{movie.movieName}</h6>
-                        </div>
-                    </div>
-                </div>
-            {/each}
-
-        {/await}
-    </div>
+    <ItemList child={TVShow} title="Recently Added: TVShows" promise={store.oblecto.episodeLibrary.getList('createdAt', 'desc')}/>
 </div>
 
 <style>
+    .display-item {
+        min-width: 300px;
+    }
+
+    .wrap-overflow {
+        overflow: visible;
+        overflow-x: paged-y;
+        overflow-wrap: break-word;
+    }
+
 
 </style>

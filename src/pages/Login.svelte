@@ -20,7 +20,7 @@
 
     {#if state == states.USERS}
             {#each states.USERS.users as user}
-                <div class="col-sm-12 col-md-4 col-lg-3 clickable" on:click={selectUser(user)}>
+                <div class="col-sm-12 col-md-4 col-lg-3 clickable bottom-pad" on:click={selectUser(user)}>
                     <div class="card">
                         <div class="img-wrapper">
                             <img class="card-img-top" src="https://picsum.photos/seed/{user.username}/256/256">
