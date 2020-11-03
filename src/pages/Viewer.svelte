@@ -56,10 +56,15 @@
     actions.playPause = function () {
         state.playing = !state.playing;
         if (state.playing) {
-            newStream(params.file, state.currentTime + state.offset);
+            newStream(params.file, calculateTime());
         } else {
+            state.offset = calculateTime();
             ui.video.pause();
         }
+    }
+
+    function calculateTime() {
+        return Number(state.currentTime) + Number(state.offset)
     }
 
     function fullscreen() {
