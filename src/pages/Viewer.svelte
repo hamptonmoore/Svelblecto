@@ -55,7 +55,6 @@
         if (playing) {
             newStream(params.file, calculateTime());
         } else {
-            offset = calculateTime();
             ui.video.pause();
         }
     }
