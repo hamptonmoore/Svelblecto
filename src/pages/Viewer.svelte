@@ -130,7 +130,7 @@
         </div>
 
         <video class="video" id="video" bind:this={ui.video}
-               bind:currentTime={currentTime} poster="poster.jpg">
+               bind:currentTime={currentTime} on:click={actions.playPause} poster="poster.jpg">
             <source src={streamingURL} type="video/mp4"/>
         </video>
 
@@ -144,14 +144,14 @@
 
             <div class="bottom-controls">
                 <div class="left-controls">
-                    <button data-title="Play (k)" bind:this={ui.playPause} on:click={actions.playPause}>
+                    <button data-title="Play" bind:this={ui.playPause} on:click={actions.playPause}>
                         <svg class="playback-icons text-white">
                             <Icon data={playing ? pause : play} scale={2}/>
                         </svg>
                     </button>
 
                     <div class="volume-controls">
-                        <button data-title="Mute (m)" class="volume-button text-white">
+                        <button data-title="Mute" class="volume-button text-white">
                             <Icon class="icon"
                                   data={volume == 0? volumeOff: volume > 0.5? volumeUp: volumeDown}
                                   scale={2} style="width: 32px; min-width: 32px; max-width: 32px;"/>
@@ -168,12 +168,12 @@
                 </div>
 
                 <div class="right-controls">
-                    <button data-title="PIP (p)" class="pip-button" id="pip-button">
+                    <button data-title="PIP" class="pip-button" id="pip-button">
                         <svg>
                             <use href="#pip"></use>
                         </svg>
                     </button>
-                    <button data-title="Full screen (f)" on:click={changeFullscreen}
+                    <button data-title="Full screen" on:click={changeFullscreen}
                             class="fullscreen-button text-white"
                             id="fullscreen-button">
                         <Icon data={fullscreen? compress: expand} scale={1.5}/>
