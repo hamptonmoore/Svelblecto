@@ -1,22 +1,13 @@
 <script>
     import {store} from "../store";
     import Icon from 'svelte-awesome';
-    import {play, pause} from 'svelte-awesome/icons';
+    import {play, pause, volumeOff, volumeDown, volumeUp} from 'svelte-awesome/icons';
 
     export let params = {}
     let streamingURL = "";
     console.log(params);
 
-    store.oblecto.axios.get(`/session/create/${params.file}`).then(({data}) => {
-        console.log(data);
-        let streamURL = new URL(store.oblecto.axios.defaults.baseURL);
-        streamURL.pathname = `/session/stream/${data.sessionId}`;
-        streamURL.searchParams.append("offset", "0");
-        streamingURL = streamURL.href;
-        console.log(streamingURL);
-        ui.video.load();
-        ui.video.play();
-    });
+
 
     let dataPromise;
     if (params.type == "movie") {
@@ -27,7 +18,7 @@
 
     dataPromise.then(({data}) => {
         let files = data.Files;
-        console.log(files);
+        console.log(data);
         for (let file of files) {
             if (file.id == params.file){
                 state.duration = file.duration;
@@ -39,25 +30,54 @@
         playing: true,
         duration: 0,
         offset: 0,
-        currentTime: 0
+        currentTime: 0,
+        volume: 1
     }
 
     let ui = {
         playPause: null,
         video: null,
-        seek: null
+        seek: null,
+        volumeSlider: null
     }
     let actions = {};
 
     actions.playPause = function () {
         state.playing = !state.playing;
         if (state.playing) {
-            ui.video.play();
+            newStream(params.file, state.currentTime + state.offset);
         } else {
             ui.video.pause();
         }
     }
 
+    function newStream(file, offset) {
+        store.oblecto.axios.get(`/session/create/${file}`).then(({data}) => {
+            state.sessionId = data.sessionId;
+            console.log(data);
+            setStream(data.sessionId, offset);
+            if (state.playing){
+               playVideo();
+            }
+        });
+    }
+
+    function playVideo(){
+        ui.video.play().catch(()=>{
+            return playVideo();
+        })
+    }
+
+    function setStream(sessionId, offset) {
+        let streamURL = new URL(store.oblecto.axios.defaults.baseURL);
+        streamURL.pathname = `/session/stream/${sessionId}`;
+        streamURL.searchParams.append("offset", offset);
+        streamingURL = streamURL.href;
+        state.offset = offset;
+        console.log("Duration = " + ui.video.currentTime);
+        ui.video.load();
+        console.log(state.offset, state.currentTime);
+    }
 
     // formatTime takes a time length in seconds and returns the time in
     // minutes and seconds
@@ -65,6 +85,14 @@
         const result = new Date(timeInSeconds * 1000).toISOString().substr(11, 8);
         return result;
     };
+
+    function seek(e) {
+        console.log(ui.seek.value);
+        newStream(params.file, ui.seek.value);
+    }
+
+
+    newStream(params.file, 10);
 </script>
 
 
@@ -78,14 +106,16 @@
             </svg>
         </div>
 
-        <video class="video" id="video" bind:this={ui.video} poster="poster.jpg">
+        <video class="video" id="video" bind:this={ui.video} bind:currentTime={state.currentTime} poster="poster.jpg">
             <source src={streamingURL} type="video/mp4"/>
         </video>
 
         <div class="video-controls" id="video-controls">
             <div class="video-progress">
-                <progress id="progress-bar" value="0" min="0"></progress>
-                <input class="seek" id="seek" value="0" min="0" type="range" step="1" bind:this={ui.seek}>
+                <progress id="progress-bar" value={Number(state.offset) + Number(state.currentTime)} min="0"
+                          max={state.duration}></progress>
+                <input id="seek" class="seek" min="0"
+                       max={state.duration} type="range" bind:this={ui.seek} on:click={seek}>
                 <div class="seek-tooltip" id="seek-tooltip">00:00</div>
             </div>
 
@@ -98,20 +128,18 @@
                     </button>
 
                     <div class="volume-controls">
-                        <button data-title="Mute (m)" class="volume-button" id="volume-button">
-                            <svg>
-                                <use class="hidden" href="#volume-mute"></use>
-                                <use class="hidden" href="#volume-low"></use>
-                                <use href="#volume-high"></use>
-                            </svg>
+                        <button data-title="Mute (m)" class="volume-button text-white">
+                            <Icon class="icon"
+                                  data={state.volume == 0? volumeOff: state.volume > 0.5? volumeUp: volumeDown}
+                                  scale={2}/>
                         </button>
 
-                        <input class="volume" id="volume" value="1"
+                        <input class="volume" bind:this={ui.volumeSlider} bind:value={state.volume}
                                data-mute="0.5" type="range" max="1" min="0" step="0.01">
                     </div>
 
                     <div class="time">
-                        <time id="time-elapsed">00:00</time>
+                        <time id="time-elapsed">{formatTime(Number(state.offset) + Number(state.currentTime))}</time>
                         <span> / </span>
                         <time id="duration">{formatTime(state.duration)}</time>
                     </div>
@@ -137,6 +165,15 @@
 
 <style>
 
+    :root {
+        --svelblecto-blue: #375a7f;
+    }
+
+    .icon {
+        min-width: 32px !important;
+        width: 32px;
+        max-width: 32px;
+    }
 
     .video-container {
         width: 100%;
@@ -193,13 +230,13 @@
     }
 
     progress::-webkit-progress-value {
-        background: var(--youtube-red);
+        background: var(--svelblecto-blue);
         border-radius: 2px;
     }
 
     progress::-moz-progress-bar {
-        border: 1px solid var(--youtube-red);
-        background: var(--youtube-red);
+        border: 1px solid var(--svelblecto-blue);
+        background: var(--svelblecto-blue);
     }
 
     .seek {
@@ -315,7 +352,11 @@
         opacity: 0;
     }
 
-    input[type=range] {
+    input[type=range].seek {
+        opacity: 0;
+    }
+
+    input[type=range].volume {
         -webkit-appearance: none;
         -moz-appearance: none;
         height: 8.4px;
@@ -323,11 +364,11 @@
         cursor: pointer;
     }
 
-    input[type=range]:focus {
+    input[type=range].volume:focus {
         outline: none;
     }
 
-    input[type=range]::-webkit-slider-runnable-track {
+    input[type=range].volume::-webkit-slider-runnable-track {
         width: 100%;
         cursor: pointer;
         border-radius: 1.3px;
@@ -335,17 +376,17 @@
         transition: all 0.4s ease;
     }
 
-    input[type=range]::-webkit-slider-thumb {
+    input[type=range].volume::-webkit-slider-thumb {
         height: 16px;
         width: 16px;
         border-radius: 16px;
-        background: var(--youtube-red);
+        background: var(--svelblecto-blue);
         cursor: pointer;
         -webkit-appearance: none;
         margin-left: -1px;
     }
 
-    input[type=range]:focus::-webkit-slider-runnable-track {
+    input[type=range].volume:focus::-webkit-slider-runnable-track {
         background: transparent;
     }
 
@@ -365,7 +406,7 @@
         background: #fff;
     }
 
-    input[type=range]::-moz-range-track {
+    input[type=range].volume::-moz-range-track {
         width: 100%;
         height: 8.4px;
         cursor: pointer;
@@ -374,17 +415,17 @@
         border-radius: 1.3px;
     }
 
-    input[type=range]::-moz-range-thumb {
+    input[type=range].volume::-moz-range-thumb {
         height: 14px;
         width: 14px;
         border-radius: 50px;
-        border: 1px solid var(--youtube-red);
-        background: var(--youtube-red);
+        border: 1px solid var(--svelblecto-blue);
+        background: var(--svelblecto-blue);
         cursor: pointer;
         margin-top: 5px;
     }
 
-    input[type=range]:focus::-moz-range-track {
+    input[type=range].volume:focus::-moz-range-track {
         outline: none;
     }
 
