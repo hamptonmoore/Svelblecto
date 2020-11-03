@@ -18,7 +18,7 @@
         console.log(data);
         for (let file of data.Files) {
             if (file.id == params.file) {
-                state.duration = file.duration;
+                duration = file.duration;
                 break;
             }
         }
@@ -35,14 +35,11 @@
         newStream(params.file, offset);
     });
 
-    let state = {
-        playing: true,
-        duration: 0,
-        offset: 0,
-        currentTime: 0,
-        volume: 1,
-        fullscreen: false
-    }
+    let playing = true
+    let duration = 0;
+    let offset = 0;
+    let currentTime=0;
+    let sessionId = "";
 
     let ui = {
         playPause: null,
@@ -54,34 +51,36 @@
     let actions = {};
 
     actions.playPause = function () {
-        state.playing = !state.playing;
-        if (state.playing) {
+        playing = !playing;
+        if (playing) {
             newStream(params.file, calculateTime());
         } else {
-            state.offset = calculateTime();
+            offset = calculateTime();
             ui.video.pause();
         }
     }
 
     function calculateTime() {
-        return Number(state.currentTime) + Number(state.offset)
+        return Number(currentTime) + Number(offset)
     }
 
-    function fullscreen() {
+    let fullscreen = false;
+
+    function changeFullscreen() {
         if (document.fullscreenElement) {
             document.exitFullscreen();
-            state.fullscreen = false;
+            fullscreen = false;
         } else {
             ui.videoContainer.requestFullscreen();
-            state.fullscreen = true;
+            fullscreen = true;
         }
     }
 
     function newStream(file, offset) {
         store.oblecto.axios.get(`/session/create/${file}`).then(({data}) => {
-            state.sessionId = data.sessionId;
+            sessionId = data.sessionId;
             setStream(data.sessionId, offset);
-            if (state.playing) {
+            if (playing) {
                 playVideo();
             }
         });
@@ -93,12 +92,12 @@
         })
     }
 
-    function setStream(sessionId, offset) {
+    function setStream(sessionId, nOffset) {
         let streamURL = new URL(store.oblecto.axios.defaults.baseURL);
         streamURL.pathname = `/session/stream/${sessionId}`;
-        streamURL.searchParams.append("offset", offset);
+        streamURL.searchParams.append("offset", nOffset);
         streamingURL = streamURL.href;
-        state.offset = offset;
+        offset = nOffset;
         ui.video.load();
     }
 
@@ -113,7 +112,10 @@
         newStream(params.file, ui.seek.value);
     }
 
-
+    let volume = 1;
+    function changeVolume() {
+        ui.video.volume = ui.volumeSlider.value;
+    }
 </script>
 
 
@@ -127,43 +129,41 @@
             </svg>
         </div>
 
-        <video class="video" id="video" bind:this={ui.video} on:click={actions.playPause}
-               bind:currentTime={state.currentTime} poster="poster.jpg">
+        <video class="video" id="video" bind:this={ui.video}
+               bind:currentTime={currentTime} poster="poster.jpg">
             <source src={streamingURL} type="video/mp4"/>
         </video>
 
         <div class="video-controls" id="video-controls">
             <div class="video-progress">
-                <progress id="progress-bar" value={Number(state.offset) + Number(state.currentTime)} min="0"
-                          max={state.duration}></progress>
+                <progress id="progress-bar" value={Number(offset) + Number(currentTime)} min="0"
+                          max={duration}></progress>
                 <input id="seek" class="seek" min="0"
-                       max={state.duration} type="range" bind:this={ui.seek} on:click={seek}>
-                <div class="seek-tooltip" id="seek-tooltip">00:00</div>
+                       max={duration} type="range" bind:this={ui.seek} on:click={seek}>
             </div>
 
             <div class="bottom-controls">
                 <div class="left-controls">
                     <button data-title="Play (k)" bind:this={ui.playPause} on:click={actions.playPause}>
                         <svg class="playback-icons text-white">
-                            <Icon data={state.playing ? pause : play} scale={2}/>
+                            <Icon data={playing ? pause : play} scale={2}/>
                         </svg>
                     </button>
 
                     <div class="volume-controls">
                         <button data-title="Mute (m)" class="volume-button text-white">
                             <Icon class="icon"
-                                  data={state.volume == 0? volumeOff: state.volume > 0.5? volumeUp: volumeDown}
-                                  scale={2}/>
+                                  data={volume == 0? volumeOff: volume > 0.5? volumeUp: volumeDown}
+                                  scale={2} style="width: 32px; min-width: 32px; max-width: 32px;"/>
                         </button>
-
-                        <input class="volume" bind:this={ui.volumeSlider} bind:value={state.volume}
+                        <input class="volume" bind:this={ui.volumeSlider} on:input={changeVolume} bind:value={volume}
                                data-mute="0.5" type="range" max="1" min="0" step="0.01">
                     </div>
 
                     <div class="time">
-                        <time id="time-elapsed">{formatTime(Number(state.offset) + Number(state.currentTime))}</time>
+                        <time id="time-elapsed">{formatTime(Number(offset) + Number(currentTime))}</time>
                         <span> / </span>
-                        <time id="duration">{formatTime(state.duration)}</time>
+                        <time id="duration">{formatTime(duration)}</time>
                     </div>
                 </div>
 
@@ -173,9 +173,10 @@
                             <use href="#pip"></use>
                         </svg>
                     </button>
-                    <button data-title="Full screen (f)" on:click={fullscreen} class="fullscreen-button text-white"
+                    <button data-title="Full screen (f)" on:click={changeFullscreen}
+                            class="fullscreen-button text-white"
                             id="fullscreen-button">
-                        <Icon data={state.fullscreen? compress: expand} scale={1.5}/>
+                        <Icon data={fullscreen? compress: expand} scale={1.5}/>
                     </button>
                 </div>
             </div>
