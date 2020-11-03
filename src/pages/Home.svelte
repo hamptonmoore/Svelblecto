@@ -14,7 +14,7 @@
               promise={store.oblecto.movieLibrary.getWatching()}/>
     <ItemList child={Movie} title="Recently Added: Movies"
               promise={store.oblecto.movieLibrary.getList('createdAt', 'desc')}/>
-    <ItemList child={TVShow} title="Recently Added: TVShows"
+    <ItemList child={TVShow} title="Recently Added: TV Shows"
               promise={store.oblecto.episodeLibrary.getList('createdAt', 'desc')}/>
 </div>
 

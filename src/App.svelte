@@ -60,16 +60,17 @@
     let state = {
         loggedIn: false
     }
-
 </script>
 
 <div>
     <nav class="navbar navbar-dark bg-primary text-white" class:d-none={!showNav}>
         <a class="navbar-brand" href="#">Oblecto</a>
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item clickable" on:click={store.signOut} >
-                <Icon data={signOut} scale={2} />
-            </li>
+            {#if store.loggedIn}
+                <li class="nav-item clickable" on:click={store.signOut}>
+                    <Icon data={signOut} scale={2}/>
+                </li>
+            {/if}
         </ul>
 
     </nav>

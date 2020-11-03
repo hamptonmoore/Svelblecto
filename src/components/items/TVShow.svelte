@@ -4,7 +4,7 @@
     </div>
     <p class="text-white">
         {item.episodeName} <br/>
-        {item.Series.seriesName}
+        <span class="text-muted">{item.Series.seriesName}</span>
     </p>
 </div>
 

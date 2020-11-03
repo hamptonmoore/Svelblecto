@@ -44,7 +44,7 @@
                         </div>
 
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control input_user"
+                            <input type="password" class="form-control input_user"
                                    placeholder="Password" bind:value={states.LOGIN.password}>
                         </div>
 

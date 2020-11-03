@@ -11,7 +11,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="73b6fa75-2a8e-47d8-873b-e5457ff841b8" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/pages/Viewer.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Viewer.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/items/TVShow.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/items/TVShow.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Home.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Home.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Login.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Login.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +75,7 @@
       <workItem from="1604095056119" duration="17000" />
       <workItem from="1604095082913" duration="1762000" />
       <workItem from="1604099427816" duration="12650000" />
-      <workItem from="1604114216209" duration="46240000" />
+      <workItem from="1604114216209" duration="48830000" />
     </task>
     <servers />
   </component>
@@ -110,10 +114,10 @@
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
     <state x="282" y="94" key="SettingsEditor/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604114761852" />
-    <state x="248" y="86" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1604367711174">
+    <state x="247" y="68" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1604369934832">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
-    <state x="248" y="86" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604367711174" />
+    <state x="247" y="68" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604369934832" />
     <state x="305" y="251" width="672" height="678" key="search.everywhere.popup" timestamp="1604340845735">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
