@@ -2,7 +2,7 @@
     import {store} from "../store";
     import {get} from "svelte/store";
     import Icon from 'svelte-awesome';
-    import {play, pause, volumeOff, volumeDown, volumeUp} from 'svelte-awesome/icons';
+    import {play, pause, volumeOff, volumeDown, volumeUp, expand, compress} from 'svelte-awesome/icons';
 
     export let params = {}
     let streamingURL = "";
@@ -40,12 +40,14 @@
         duration: 0,
         offset: 0,
         currentTime: 0,
-        volume: 1
+        volume: 1,
+        fullscreen: false
     }
 
     let ui = {
         playPause: null,
         video: null,
+        videoContainer: null,
         seek: null,
         volumeSlider: null
     }
@@ -60,12 +62,22 @@
         }
     }
 
+    function fullscreen() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+            state.fullscreen = false;
+        } else {
+            ui.videoContainer.requestFullscreen();
+            state.fullscreen = true;
+        }
+    }
+
     function newStream(file, offset) {
         store.oblecto.axios.get(`/session/create/${file}`).then(({data}) => {
             state.sessionId = data.sessionId;
             setStream(data.sessionId, offset);
-            if (state.playing){
-               playVideo();
+            if (state.playing) {
+                playVideo();
             }
         });
     }
@@ -102,7 +114,7 @@
 
 <div>
 
-    <div class="video-container" id="video-container">
+    <div class="video-container" bind:this={ui.videoContainer} id="video-container">
         <div class="playback-animation" id="playback-animation">
             <svg class="playback-icons">
                 <use class="hidden" href="#play-icon"></use>
@@ -110,7 +122,8 @@
             </svg>
         </div>
 
-        <video class="video" id="video" bind:this={ui.video} bind:currentTime={state.currentTime} poster="poster.jpg">
+        <video class="video" id="video" bind:this={ui.video} on:click={actions.playPause}
+               bind:currentTime={state.currentTime} poster="poster.jpg">
             <source src={streamingURL} type="video/mp4"/>
         </video>
 
@@ -155,11 +168,9 @@
                             <use href="#pip"></use>
                         </svg>
                     </button>
-                    <button data-title="Full screen (f)" class="fullscreen-button" id="fullscreen-button">
-                        <svg>
-                            <use href="#fullscreen"></use>
-                            <use href="#fullscreen-exit" class="hidden"></use>
-                        </svg>
+                    <button data-title="Full screen (f)" on:click={fullscreen} class="fullscreen-button text-white"
+                            id="fullscreen-button">
+                        <Icon data={state.fullscreen? compress: expand} scale={1.5}/>
                     </button>
                 </div>
             </div>
