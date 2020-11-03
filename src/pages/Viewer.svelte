@@ -1,13 +1,11 @@
 <script>
     import {store} from "../store";
+    import {get} from "svelte/store";
     import Icon from 'svelte-awesome';
     import {play, pause, volumeOff, volumeDown, volumeUp} from 'svelte-awesome/icons';
 
     export let params = {}
     let streamingURL = "";
-    console.log(params);
-
-
 
     let dataPromise;
     if (params.type == "movie") {
@@ -17,13 +15,24 @@
     }
 
     dataPromise.then(({data}) => {
-        let files = data.Files;
         console.log(data);
-        for (let file of files) {
-            if (file.id == params.file){
+        for (let file of data.Files) {
+            if (file.id == params.file) {
                 state.duration = file.duration;
+                break;
             }
         }
+
+        let offset = 0;
+        for (let track of data.TrackMovies) {
+            console.log(track);
+            if (track.UserId == get(store.user).id) {
+                offset = track.time;
+                break;
+            }
+        }
+
+        newStream(params.file, offset);
     });
 
     let state = {
@@ -54,7 +63,6 @@
     function newStream(file, offset) {
         store.oblecto.axios.get(`/session/create/${file}`).then(({data}) => {
             state.sessionId = data.sessionId;
-            console.log(data);
             setStream(data.sessionId, offset);
             if (state.playing){
                playVideo();
@@ -74,9 +82,7 @@
         streamURL.searchParams.append("offset", offset);
         streamingURL = streamURL.href;
         state.offset = offset;
-        console.log("Duration = " + ui.video.currentTime);
         ui.video.load();
-        console.log(state.offset, state.currentTime);
     }
 
     // formatTime takes a time length in seconds and returns the time in
@@ -87,12 +93,10 @@
     };
 
     function seek(e) {
-        console.log(ui.seek.value);
         newStream(params.file, ui.seek.value);
     }
 
 
-    newStream(params.file, 10);
 </script>
 
 
