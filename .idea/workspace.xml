@@ -11,6 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="73b6fa75-2a8e-47d8-873b-e5457ff841b8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/Viewer.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Viewer.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,7 +73,9 @@
       <workItem from="1604095082913" duration="1762000" />
       <workItem from="1604099427816" duration="12650000" />
       <workItem from="1604114216209" duration="49229000" />
-      <workItem from="1604419743829" duration="2051000" />
+      <workItem from="1604419743829" duration="2833000" />
+      <workItem from="1604424808706" duration="5803000" />
+      <workItem from="1604459530327" duration="331000" />
     </task>
     <servers />
   </component>
@@ -112,10 +115,10 @@
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
     <state x="282" y="94" key="SettingsEditor/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604114761852" />
-    <state x="244" y="14" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1604420842356">
+    <state x="240" y="-58" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1604447316054">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>
-    <state x="244" y="14" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604420842356" />
+    <state x="240" y="-58" width="772" height="762" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.2560.1080/2560.0.1920.1080@0.0.2560.1080" timestamp="1604447316054" />
     <state x="305" y="251" width="672" height="678" key="search.everywhere.popup" timestamp="1604340845735">
       <screen x="0" y="0" width="2560" height="1080" />
     </state>

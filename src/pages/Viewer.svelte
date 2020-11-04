@@ -5,47 +5,61 @@
     import {play, pause, volumeOff, volumeDown, volumeUp, expand, compress} from 'svelte-awesome/icons';
 
     export let params = {}
+
+    import {onMount} from 'svelte';
+
+
+    onMount(async () => {
+        ui.video.addEventListener('timeupdate', updateTimeElapsed);
+
+        let dataPromise;
+        if (params.type == "movie") {
+            dataPromise = store.oblecto.axios.get(`/movie/${params.id}/info`);
+        } else {
+            dataPromise = store.oblecto.axios.get(`/episode/${params.id}/info`);
+        }
+
+        dataPromise.then(({data}) => {
+            console.log(data);
+            for (let file of data.Files) {
+                if (file.id == params.file) {
+                    duration = file.duration;
+                    break;
+                }
+            }
+
+            let offset = 0;
+            if (data.TrackMovies) {
+                for (let track of data.TrackMovies) {
+                    console.log(track);
+                    if (track.UserId == get(store.user).id) {
+                        offset = track.time;
+                        break;
+                    }
+                }
+            }
+
+            newStream(params.file, offset);
+        });
+    });
+
     let streamingURL = "";
 
-    let dataPromise;
-    if (params.type == "movie") {
-        dataPromise = store.oblecto.axios.get(`/movie/${params.id}/info`);
-    } else {
-        dataPromise = store.oblecto.axios.get(`/episode/${params.id}/info`);
-    }
 
-    dataPromise.then(({data}) => {
-        console.log(data);
-        for (let file of data.Files) {
-            if (file.id == params.file) {
-                duration = file.duration;
-                break;
-            }
-        }
-
-        let offset = 0;
-        for (let track of data.TrackMovies) {
-            console.log(track);
-            if (track.UserId == get(store.user).id) {
-                offset = track.time;
-                break;
-            }
-        }
-
-        newStream(params.file, offset);
-    });
 
     let playing = true
     let duration = 0;
     let offset = 0;
-    let currentTime=0;
+    let currentTime = 0;
     let sessionId = "";
+    let showbar = false;
 
     let ui = {
         playPause: null,
         video: null,
         videoContainer: null,
         seek: null,
+        streamSession: null,
         volumeSlider: null
     }
     let actions = {};
@@ -53,7 +67,7 @@
     actions.playPause = function () {
         playing = !playing;
         if (playing) {
-            newStream(params.file, calculateTime());
+            playVideo();
         } else {
             ui.video.pause();
         }
@@ -85,10 +99,12 @@
         });
     }
 
-    function playVideo(){
-        ui.video.play().catch(()=>{
-            return playVideo();
-        })
+    function playVideo() {
+        Promise.race([new Promise((resolve, reject) => {
+            setTimeout(reject, 2000)
+        }), ui.video.play()]).catch(() => {
+            console.log("VIDEO NOT PLAYING");
+        });
     }
 
     function setStream(sessionId, nOffset) {
@@ -96,6 +112,7 @@
         streamURL.pathname = `/session/stream/${sessionId}`;
         streamURL.searchParams.append("offset", nOffset);
         streamingURL = streamURL.href;
+        ui.video.src = streamingURL;
         offset = nOffset;
         ui.video.load();
     }
@@ -105,81 +122,91 @@
     function formatTime(timeInSeconds) {
         const result = new Date(timeInSeconds * 1000).toISOString().substr(11, 8);
         return result;
-    };
+    }
 
     function seek(e) {
         newStream(params.file, ui.seek.value);
     }
 
     let volume = 1;
+
     function changeVolume() {
         ui.video.volume = ui.volumeSlider.value;
+    }
+
+    function mouseOverPlayer() {
+        showbar = true;
+    }
+
+    function mouseOutPlayer() {
+        // showbar = false;
+    }
+
+    function updateTimeElapsed(){
+        currentTime = ui.video.currentTime;
     }
 </script>
 
 
 <div>
 
-    <div class="video-container" bind:this={ui.videoContainer} id="video-container">
-        <div class="playback-animation" id="playback-animation">
-            <svg class="playback-icons">
-                <use class="hidden" href="#play-icon"></use>
-                <use href="#pause"></use>
-            </svg>
-        </div>
+    <div class="video-container" bind:this={ui.videoContainer} id="video-container" on:mouseover={mouseOverPlayer}
+         on:mouseout={mouseOutPlayer}>
 
-        <video class="video" id="video" bind:this={ui.video}
-               bind:currentTime={currentTime} on:click={actions.playPause} poster="poster.jpg">
-            <source src={streamingURL} type="video/mp4"/>
+        <video class="video" id="video" preload="none" bind:this={ui.video}
+               on:click={actions.playPause}>
         </video>
 
-        <div class="video-controls" id="video-controls">
-            <div class="video-progress">
-                <progress id="progress-bar" value={Number(offset) + Number(currentTime)} min="0"
-                          max={duration}></progress>
-                <input id="seek" class="seek" min="0"
-                       max={duration} type="range" bind:this={ui.seek} on:click={seek}>
-            </div>
+        {#if showbar}
+            <div class="video-controls" id="video-controls">
+                <div class="video-progress">
+                    <progress id="progress-bar" value={Number(offset) + Number(currentTime)} min="0"
+                              max={duration}></progress>
+                    <input id="seek" class="seek" min="0"
+                           max={duration} type="range" bind:this={ui.seek} on:click={seek}>
+                </div>
 
-            <div class="bottom-controls">
-                <div class="left-controls">
-                    <button data-title="Play" bind:this={ui.playPause} on:click={actions.playPause}>
-                        <svg class="playback-icons text-white">
-                            <Icon data={playing ? pause : play} scale={2}/>
-                        </svg>
-                    </button>
-
-                    <div class="volume-controls">
-                        <button data-title="Mute" class="volume-button text-white">
-                            <Icon class="icon"
-                                  data={volume == 0? volumeOff: volume > 0.5? volumeUp: volumeDown}
-                                  scale={2} style="width: 32px; min-width: 32px; max-width: 32px;"/>
+                <div class="bottom-controls">
+                    <div class="left-controls">
+                        <button data-title="Play" bind:this={ui.playPause} on:click={actions.playPause}>
+                            <svg class="playback-icons text-white">
+                                <Icon data={playing ? pause : play} scale={2}/>
+                            </svg>
                         </button>
-                        <input class="volume" bind:this={ui.volumeSlider} on:input={changeVolume} bind:value={volume}
-                               data-mute="0.5" type="range" max="1" min="0" step="0.01">
+
+                        <div class="volume-controls">
+                            <button data-title="Mute" class="volume-button text-white">
+                                <Icon class="icon"
+                                      data={volume == 0? volumeOff: volume > 0.5? volumeUp: volumeDown}
+                                      scale={2} style="width: 32px; min-width: 32px; max-width: 32px;"/>
+                            </button>
+                            <input class="volume" bind:this={ui.volumeSlider} on:input={changeVolume}
+                                   bind:value={volume}
+                                   data-mute="0.5" type="range" max="1" min="0" step="0.01">
+                        </div>
+
+                        <div class="time">
+                            <time id="time-elapsed">{formatTime(Number(offset) + Number(currentTime))}</time>
+                            <span> / </span>
+                            <time id="duration">{formatTime(duration)}</time>
+                        </div>
                     </div>
 
-                    <div class="time">
-                        <time id="time-elapsed">{formatTime(Number(offset) + Number(currentTime))}</time>
-                        <span> / </span>
-                        <time id="duration">{formatTime(duration)}</time>
+                    <div class="right-controls">
+                        <button data-title="PIP" class="pip-button" id="pip-button">
+                            <svg>
+                                <use href="#pip"></use>
+                            </svg>
+                        </button>
+                        <button data-title="Full screen" on:click={changeFullscreen}
+                                class="fullscreen-button text-white"
+                                id="fullscreen-button">
+                            <Icon data={fullscreen? compress: expand} scale={1.5}/>
+                        </button>
                     </div>
-                </div>
-
-                <div class="right-controls">
-                    <button data-title="PIP" class="pip-button" id="pip-button">
-                        <svg>
-                            <use href="#pip"></use>
-                        </svg>
-                    </button>
-                    <button data-title="Full screen" on:click={changeFullscreen}
-                            class="fullscreen-button text-white"
-                            id="fullscreen-button">
-                        <Icon data={fullscreen? compress: expand} scale={1.5}/>
-                    </button>
                 </div>
             </div>
-        </div>
+        {/if}
     </div>
 </div>
 
